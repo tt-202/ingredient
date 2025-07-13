@@ -186,7 +186,7 @@ function App() {
                 <h1 className="text-4xl font-bold text-indigo-700">Smart Swap</h1>
                 <button
                     onClick={handleLogout}
-                    className="text-sm bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                    className="text-sm bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
                 >
                     Logout
                 </button>

@@ -33,7 +33,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
         setError(null);
         try {
             await signInWithPopup(auth, googleProvider);
-            router.push('/smart-swap');
+            router.push('/settings');
         } catch (err: any) {
             console.error('Google Sign-in Error:', err);
             setError(err.message || 'Google sign-in failed');
@@ -51,7 +51,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
         try {
             if (mode === 'login') {
                 await signInWithEmailAndPassword(auth, email, password);
-                router.push('/smart-swap');
+                router.push('/settings');
             } else {
                 if (password !== confirmPassword) {
                     setValidationError('Passwords do not match');
