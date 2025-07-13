@@ -7,7 +7,7 @@ export default function WelcomePage() {
       <p className="mt-6 text-lg leading-8 text-gray-600">
         Replace ingredients in recipes with other ingredients.
       </p>
-      </p>
+    
     </div>
   );
 } 
