@@ -13,7 +13,18 @@ async function getHandler() {
 
 async function addCorsHeaders(res: Response) {
     const newHeaders = new Headers(res.headers);
-    newHeaders.set("Access-Control-Allow-Origin", "http://192.168.1.191:3000");
+    const allowedOrigins = [
+        "http://localhost:3000",
+        "http://192.168.1.191:3000",
+        process.env.NEXT_PUBLIC_APP_URL,
+        process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+    ].filter(Boolean);
+
+    const origin = process.env.NODE_ENV === 'production'
+        ? (process.env.NEXT_PUBLIC_APP_URL || `https://${process.env.VERCEL_URL}`)
+        : "http://localhost:3000";
+
+    newHeaders.set("Access-Control-Allow-Origin", origin);
     newHeaders.set("Access-Control-Allow-Credentials", "true");
     return new Response(res.body, {
         status: res.status,
@@ -35,10 +46,21 @@ export async function GET(req: Request) {
 }
 
 export async function OPTIONS() {
+    const allowedOrigins = [
+        "http://localhost:3000",
+        "http://192.168.1.191:3000",
+        process.env.NEXT_PUBLIC_APP_URL,
+        process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+    ].filter(Boolean);
+
+    const origin = process.env.NODE_ENV === 'production'
+        ? (process.env.NEXT_PUBLIC_APP_URL || `https://${process.env.VERCEL_URL}`)
+        : "http://localhost:3000";
+
     return new Response(null, {
         status: 200,
         headers: {
-            "Access-Control-Allow-Origin": "http://192.168.1.191:3000",
+            "Access-Control-Allow-Origin": origin,
             "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Authorization",
             "Access-Control-Allow-Credentials": "true",

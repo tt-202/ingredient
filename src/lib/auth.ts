@@ -46,7 +46,9 @@ const SMTP_FROM_EMAIL = process.env.SMTP_FROM_EMAIL || "no-reply@mailtrap.io";
 const verificationEmailRedirectURL =
   typeof process.env.NEXT_PUBLIC_BETTER_AUTH_URL === "string"
     ? `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/verify-email`
-    : "http://localhost:3000/verify-email";
+    : process.env.NODE_ENV === 'production'
+      ? `https://${process.env.VERCEL_URL}/verify-email`
+      : "http://localhost:3000/verify-email";
 
 const sendEmail = async (options: {
   to: string;
@@ -76,8 +78,15 @@ const sendEmail = async (options: {
 export const auth = (async () => {
   const { db } = await connectToDatabase(process.env.MONGODB_URI!);
 
+  const trustedOrigins = [
+    "http://localhost:3000",
+    "http://192.168.1.191:3000",
+    process.env.NEXT_PUBLIC_APP_URL,
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+  ].filter((origin): origin is string => typeof origin === 'string');
+
   return betterAuth({
-    trustedOrigins: ["http://localhost:3000", "http://192.168.1.191:3000"],
+    trustedOrigins,
     database: mongodbAdapter(db),
     emailAndPassword: {
       enabled: true,
@@ -122,7 +131,6 @@ export const auth = (async () => {
           console.error("Failed to send verification email:", result.error);
         }
       },
-      verificationEmailRedirectURL,
     },
     socialProviders: {
       google: {
