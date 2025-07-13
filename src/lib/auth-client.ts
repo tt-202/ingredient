@@ -8,7 +8,8 @@ console.log('NEXT_PUBLIC_BETTER_AUTH_URL:', process.env.NEXT_PUBLIC_BETTER_AUTH_
 // Make sure we have a string URL, not an object
 const baseURL = typeof process.env.NEXT_PUBLIC_AUTH_API_URL === 'string'
   ? process.env.NEXT_PUBLIC_AUTH_API_URL
-  : 'http://localhost:3000/api/auth';
+  : 'https://ingredient-tuyentrans-projects.vercel.app/api/auth';
+//: 'http://localhost:3000/api/auth';
 
 console.log('Using baseURL:', baseURL);
 
