@@ -13,13 +13,6 @@ async function getHandler() {
 
 async function addCorsHeaders(res: Response) {
     const newHeaders = new Headers(res.headers);
-    const allowedOrigins = [
-        "http://localhost:3000",
-        "http://192.168.1.191:3000",
-        process.env.NEXT_PUBLIC_APP_URL,
-        process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
-    ].filter(Boolean);
-
     const origin = process.env.NODE_ENV === 'production'
         ? (process.env.NEXT_PUBLIC_APP_URL || `https://${process.env.VERCEL_URL}`)
         : "http://localhost:3000";
@@ -46,13 +39,6 @@ export async function GET(req: Request) {
 }
 
 export async function OPTIONS() {
-    const allowedOrigins = [
-        "http://localhost:3000",
-        "http://192.168.1.191:3000",
-        process.env.NEXT_PUBLIC_APP_URL,
-        process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
-    ].filter(Boolean);
-
     const origin = process.env.NODE_ENV === 'production'
         ? (process.env.NEXT_PUBLIC_APP_URL || `https://${process.env.VERCEL_URL}`)
         : "http://localhost:3000";

@@ -86,6 +86,7 @@ export const auth = (async () => {
   ].filter((origin): origin is string => typeof origin === 'string');
 
   return betterAuth({
+    secret: process.env.BETTER_AUTH_SECRET || "your-secret-key-here",
     trustedOrigins,
     database: mongodbAdapter(db),
     emailAndPassword: {

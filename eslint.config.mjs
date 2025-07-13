@@ -12,9 +12,17 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
+    ignores: ["**/__tests__/**", "**/*.test.*", "**/*.spec.*"],
     rules: {
       "react/no-unescaped-entities": "off",
       "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-require-imports": "off",
+      "react/display-name": "off"
+    }
+  },
+  {
+    files: ["**/__tests__/**", "**/*.test.*", "**/*.spec.*"],
+    rules: {
       "@typescript-eslint/no-require-imports": "off",
       "react/display-name": "off"
     }
