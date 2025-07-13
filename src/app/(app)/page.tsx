@@ -5,7 +5,7 @@ export default function WelcomePage() {
         Welcome to Cooking Stories
       </h1>
       <p className="mt-6 text-lg leading-8 text-gray-600">
-        This is how you find your ingredient.
+        Replace your ingredients.
       </p>
     </div>
   );

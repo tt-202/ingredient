@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Social Story Generator",
-  description: "Generate stories from social media exports",
+  title: "Ingredient App - Smart Ingredient Substitution",
+  description: "Find perfect ingredient substitutes for your recipes",
 };
 
 export default function RootLayout({

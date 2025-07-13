@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -8,6 +8,9 @@ import {
     createUserWithEmailAndPassword,
     sendEmailVerification,
     signInWithPopup,
+    onAuthStateChanged,
+    signOut,
+    User
 } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 
@@ -27,6 +30,15 @@ export default function AuthForm({ mode }: AuthFormProps) {
     const [error, setError] = useState<string | null>(null);
     const [validationError, setValidationError] = useState<string | null>(null);
     const [verificationSent, setVerificationSent] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const handleGoogleSignIn = async () => {
         setStatus('loading');
@@ -79,6 +91,15 @@ export default function AuthForm({ mode }: AuthFormProps) {
         }
     };
 
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            router.push('/login');
+        } catch (err) {
+            console.error('Logout failed:', err);
+        }
+    };
+
     if (verificationSent) {
         return (
             <div className="max-w-md mx-auto p-6 space-y-4 text-center">
@@ -95,6 +116,21 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
     return (
         <div className="max-w-md mx-auto p-6 space-y-6">
+            {/* User Email Display */}
+            {user && (
+                <div className="flex justify-between items-center mb-4">
+                    <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded border">
+                        {user.email}
+                    </div>
+                    <button
+                        onClick={handleLogout}
+                        className="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
+                    >
+                        Logout
+                    </button>
+                </div>
+            )}
+
             <button
                 onClick={handleGoogleSignIn}
                 disabled={status === 'loading'}

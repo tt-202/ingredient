@@ -206,7 +206,7 @@ function ResetPasswordContent() {
                                     Contact Us
                                 </Link>
                             </div>
-                            <div>© Social Story Generator 2025</div>
+                            <div>© Ingredient App 2025</div>
                         </div>
                     </div>
                 </footer>

@@ -119,7 +119,7 @@ export const auth = (async () => {
 
         const result = await sendEmail({
           to: user.email,
-          subject: "Verify Your Email - Social Story Generator",
+          subject: "Verify Your Email - Ingredient App",
           text: `Click the link to verify your email: ${verificationUrl}`,
           html: `
             <h2>Email Verification</h2>

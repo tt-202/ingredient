@@ -1,11 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { signOut } from 'firebase/auth';
-
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-
+import { useRouter } from 'next/navigation';
 
 function App() {
     const router = useRouter();
@@ -13,6 +11,15 @@ function App() {
     const [results, setResults] = useState<{ [ingredient: string]: any[] }>({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const findSubstitutes = async (ingredients: string[]) => {
         setLoading(true);
@@ -179,17 +186,23 @@ function App() {
         }
     };
 
-
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-start p-6 font-sans">
             <div className="flex justify-between items-center w-full max-w-2xl mb-4">
                 <h1 className="text-4xl font-bold text-indigo-700">Smart Swap</h1>
-                <button
-                    onClick={handleLogout}
-                    className="text-sm bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
-                >
-                    Logout
-                </button>
+                <div className="flex items-center gap-3">
+                    {user && (
+                        <div className="text-sm text-gray-600 bg-white px-3 py-1 rounded border">
+                            {user.email}
+                        </div>
+                    )}
+                    <button
+                        onClick={handleLogout}
+                        className="text-sm bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
+                    >
+                        Logout
+                    </button>
+                </div>
             </div>
 
             <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-2xl">
