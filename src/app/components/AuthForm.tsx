@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+
 import {
     getAuth,
     signInWithEmailAndPassword,
