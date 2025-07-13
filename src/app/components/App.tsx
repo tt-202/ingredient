@@ -20,6 +20,9 @@ function App() {
         setError(null);
 
         const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+        console.log('API Key present:', !!apiKey);
+        console.log('API Key length:', apiKey?.length);
+
         if (!apiKey) {
             setError('Google API key is missing. Please set NEXT_PUBLIC_GOOGLE_API_KEY environment variable.');
             setLoading(false);
@@ -56,11 +59,17 @@ function App() {
 
             try {
                 console.log(`Making API request for ingredient: ${ingredient}`);
+                console.log('API URL:', apiUrl);
+                console.log('Payload:', JSON.stringify(payload, null, 2));
+
                 const res = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 });
+
+                console.log('Response status:', res.status);
+                console.log('Response headers:', Object.fromEntries(res.headers.entries()));
 
                 if (!res.ok) {
                     const errorText = await res.text();
@@ -69,12 +78,61 @@ function App() {
                 }
 
                 const data = await res.json();
-                console.log('API Response:', data);
+                console.log('Full API Response:', JSON.stringify(data, null, 2));
 
                 const jsonString = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                console.log('Extracted JSON string:', jsonString);
 
                 if (!jsonString) {
                     console.error('Empty response from Gemini:', data);
+                    console.error('Response structure:', {
+                        hasCandidates: !!data?.candidates,
+                        candidatesLength: data?.candidates?.length,
+                        hasContent: !!data?.candidates?.[0]?.content,
+                        hasParts: !!data?.candidates?.[0]?.content?.parts,
+                        partsLength: data?.candidates?.[0]?.content?.parts?.length,
+                        hasText: !!data?.candidates?.[0]?.content?.parts?.[0]?.text
+                    });
+
+                    // Try a simpler approach without structured output
+                    console.log('Trying fallback approach...');
+                    const fallbackPayload = {
+                        contents: [{
+                            role: 'user',
+                            parts: [{
+                                text: `For the ingredient '${ingredient}', suggest 1-3 suitable substitutes. Return as JSON array with objects containing: substitute, score (0-100), reason, cuisine_context, allergen_info, historical_notes.`
+                            }]
+                        }]
+                    };
+
+                    const fallbackRes = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(fallbackPayload),
+                    });
+
+                    if (!fallbackRes.ok) {
+                        throw new Error(`Fallback API request failed: ${fallbackRes.status}`);
+                    }
+
+                    const fallbackData = await fallbackRes.json();
+                    console.log('Fallback response:', fallbackData);
+
+                    const fallbackText = fallbackData?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (!fallbackText) {
+                        throw new Error('Gemini response missing or empty. Please check your API key and try again.');
+                    }
+
+                    try {
+                        const fallbackParsed = JSON.parse(fallbackText);
+                        if (Array.isArray(fallbackParsed)) {
+                            allResults[ingredient] = fallbackParsed;
+                            continue;
+                        }
+                    } catch (fallbackErr) {
+                        console.error('Fallback parsing failed:', fallbackErr);
+                    }
+
                     throw new Error('Gemini response missing or empty. Please check your API key and try again.');
                 }
 
@@ -88,9 +146,11 @@ function App() {
                 }
 
                 if (!Array.isArray(parsed)) {
+                    console.error('Parsed response is not an array:', parsed);
                     throw new Error('Expected array response from Gemini API.');
                 }
 
+                console.log('Successfully parsed response:', parsed);
                 allResults[ingredient] = parsed;
             } catch (err: any) {
                 console.error(`Error for ingredient "${ingredient}":`, err);
