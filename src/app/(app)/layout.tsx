@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+
 import { ReactNode } from 'react';
 import { UserCircle, Upload } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
@@ -81,7 +82,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                   Contact Us
                 </Link>
               </div>
-              <div>© Igredient Imposter 2025</div>
+              <div>© Ingredient Imposter 2025</div>
             </div>
           </div>
         </footer>
