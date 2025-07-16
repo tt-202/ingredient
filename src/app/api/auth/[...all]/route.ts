@@ -1,6 +1,16 @@
 import { auth } from "@/lib/auth"; // auth is Promise<BetterAuthInstance>
 import { toNextJsHandler } from "better-auth/next-js";
 
+// Debug logging for environment variables
+console.log('DEBUG ENV', {
+    NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_BETTER_AUTH_URL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
+    NEXT_PUBLIC_AUTH_API_URL: process.env.NEXT_PUBLIC_AUTH_API_URL,
+    VERCEL_URL: process.env.VERCEL_URL,
+    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+});
+
 let handler: ReturnType<typeof toNextJsHandler> | null = null;
 
 async function getHandler() {
