@@ -53,13 +53,12 @@ export default function SettingsPage() {
                         <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
                         <div className="flex items-center gap-3">
                             {user && (
-                                <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded border">
-                                    {user.email}
-                                </div>
+                                <span className="text-sm font-bold text-indigo-700">{user.email}</span>
                             )}
                             <button
                                 onClick={handleLogout}
-                                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                                className="text-sm text-black hover:underline hover:text-gray-800 bg-transparent border-none shadow-none focus:outline-none"
+                                style={{ background: 'none', border: 'none', boxShadow: 'none', textDecoration: 'underline' }}
                             >
                                 Logout
                             </button>

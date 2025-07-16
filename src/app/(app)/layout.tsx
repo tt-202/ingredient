@@ -9,18 +9,16 @@ import LoadingSpinner from '../components/LoadingSpinner';
 export default function AppLayout({ children }: { children: ReactNode }) {
   const { data: session, isPending } = authClient.useSession();
   return (
-    <div className="min-h-screen bg-gray-50 relative">
-      {/* Grid background pattern */}
-      <div className="absolute inset-0 bg-[#F1F5F9] bg-opacity-90">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-            linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
-          `,
-          backgroundSize: '4rem 4rem'
-        }} />
-      </div>
-
+    <div
+      style={{
+        backgroundImage: "url('/icon.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+        position: 'relative'
+      }}
+    >
       <div className="relative min-h-screen flex flex-col">
         {/* Header with user info */}
         <header className="bg-white shadow">
@@ -28,7 +26,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-8">
                 <Link href="/" className="text-xl font-bold text-gray-900">
-                  RecipeGenerator
+                  Ingredient Imposter
                 </Link>
                 {!isPending && session?.user && (
                   <><Link
@@ -83,7 +81,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                   Contact Us
                 </Link>
               </div>
-              <div>© RecipeGeneratior 2025</div>
+              <div>© Igredient Imposter 2025</div>
             </div>
           </div>
         </footer>

@@ -16,8 +16,8 @@ interface TeamMember {
 const teamMembers: TeamMember[] = [
     {
         name: "Connor Hellman",
-        role: "Project Manager/Frontend Developer",
-        description: "Leads project planning, coordinates team efforts, and ensures timely delivery of features..Specializes in React, Next.js, and modern UI/UX design. Creates responsive and accessible user interfaces.",
+        role: "Frontend/Backend Developer",
+        description: "Specializes in React, Next.js, and modern UI/UX design. Creates responsive and accessible user interfaces.",
         avatar: "👨‍💻",
         color: "bg-blue-500"
     },
@@ -87,7 +87,7 @@ export default function ContactPage() {
                             )}
                             <button
                                 onClick={handleLogout}
-                                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                                className="text-black px-4 py-2 rounded-lg hover:underline transition-colors"
                             >
                                 Logout
                             </button>
@@ -152,11 +152,11 @@ export default function ContactPage() {
                             <div className="space-y-3">
                                 <div className="flex items-center">
                                     <span className="text-gray-500 mr-3">📧</span>
-                                    <span className="text-gray-700">https://github.com/tt-202/ingredient</span>
+                                    <span className="text-gray-700">tuyentran02@yahoo.com</span>
                                 </div>
                                 <div className="flex items-center">
                                     <span className="text-gray-500 mr-3">📱</span>
-                                    <span className="text-gray-700">+1 (555) 123-4567</span>
+                                    <span className="text-gray-700">+1 (407) 823-2000</span>
                                 </div>
                                 <div className="flex items-center">
                                     <span className="text-gray-500 mr-3">📍</span>

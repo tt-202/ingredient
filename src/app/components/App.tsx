@@ -12,12 +12,13 @@ function App() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(null);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setUser(user);
         });
-
         return () => unsubscribe();
     }, []);
 
@@ -27,11 +28,8 @@ function App() {
         setError(null);
 
         const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
-        console.log('API Key present:', !!apiKey);
-        console.log('API Key length:', apiKey?.length);
-
         if (!apiKey) {
-            setError('Google API key is missing. Please set NEXT_PUBLIC_GOOGLE_API_KEY environment variable.');
+            setError('Google API key is missing.');
             setLoading(false);
             return;
         }
@@ -65,104 +63,31 @@ function App() {
             };
 
             try {
-                console.log(`Making API request for ingredient: ${ingredient}`);
-                console.log('API URL:', apiUrl);
-                console.log('Payload:', JSON.stringify(payload, null, 2));
-
                 const res = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 });
 
-                console.log('Response status:', res.status);
-                console.log('Response headers:', Object.fromEntries(res.headers.entries()));
-
-                if (!res.ok) {
-                    const errorText = await res.text();
-                    console.error(`API Error (${res.status}):`, errorText);
-                    throw new Error(`API request failed: ${res.status} ${res.statusText}`);
-                }
-
                 const data = await res.json();
-                console.log('Full API Response:', JSON.stringify(data, null, 2));
-
                 const jsonString = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-                console.log('Extracted JSON string:', jsonString);
 
                 if (!jsonString) {
-                    console.error('Empty response from Gemini:', data);
-                    console.error('Response structure:', {
-                        hasCandidates: !!data?.candidates,
-                        candidatesLength: data?.candidates?.length,
-                        hasContent: !!data?.candidates?.[0]?.content,
-                        hasParts: !!data?.candidates?.[0]?.content?.parts,
-                        partsLength: data?.candidates?.[0]?.content?.parts?.length,
-                        hasText: !!data?.candidates?.[0]?.content?.parts?.[0]?.text
-                    });
-
-                    // Try a simpler approach without structured output
-                    console.log('Trying fallback approach...');
-                    const fallbackPayload = {
-                        contents: [{
-                            role: 'user',
-                            parts: [{
-                                text: `For the ingredient '${ingredient}', suggest 1-3 suitable substitutes. Return as JSON array with objects containing: substitute, score (0-100), reason, cuisine_context, allergen_info, historical_notes.`
-                            }]
-                        }]
-                    };
-
-                    const fallbackRes = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(fallbackPayload),
-                    });
-
-                    if (!fallbackRes.ok) {
-                        throw new Error(`Fallback API request failed: ${fallbackRes.status}`);
-                    }
-
-                    const fallbackData = await fallbackRes.json();
-                    console.log('Fallback response:', fallbackData);
-
-                    const fallbackText = fallbackData?.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (!fallbackText) {
-                        throw new Error('Gemini response missing or empty. Please check your API key and try again.');
-                    }
-
-                    try {
-                        const fallbackParsed = JSON.parse(fallbackText);
-                        if (Array.isArray(fallbackParsed)) {
-                            allResults[ingredient] = fallbackParsed;
-                            continue;
-                        }
-                    } catch (fallbackErr) {
-                        console.error('Fallback parsing failed:', fallbackErr);
-                    }
-
-                    throw new Error('Gemini response missing or empty. Please check your API key and try again.');
+                    console.warn('Empty response:', JSON.stringify(data, null, 2));
+                    throw new Error('Gemini response missing or empty.');
                 }
 
                 let parsed;
                 try {
                     parsed = JSON.parse(jsonString);
                 } catch (err) {
-                    console.error('Failed to parse Gemini response:', err);
-                    console.error('Raw response:', jsonString);
-                    throw new Error('Failed to parse Gemini response as JSON. Please try again.');
+                    console.warn('Failed to parse Gemini response:', err);
+                    throw new Error('Failed to parse Gemini response as JSON.');
                 }
 
-                if (!Array.isArray(parsed)) {
-                    console.error('Parsed response is not an array:', parsed);
-                    throw new Error('Expected array response from Gemini API.');
-                }
-
-                console.log('Successfully parsed response:', parsed);
                 allResults[ingredient] = parsed;
             } catch (err: any) {
-                console.error(`Error for ingredient "${ingredient}":`, err);
                 setError(`Error for ingredient "${ingredient}": ${err.message}`);
-                break; // Stop processing other ingredients if one fails
             }
         }
 
@@ -186,83 +111,103 @@ function App() {
         }
     };
 
+
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-start p-6 font-sans">
-            <div className="flex justify-between items-center w-full max-w-2xl mb-4">
-                <h1 className="text-4xl font-bold text-indigo-700">Smart Swap</h1>
-                <div className="flex items-center gap-3">
-                    {user && (
-                        <div className="text-sm text-gray-600 bg-white px-3 py-1 rounded border">
-                            {user.email}
+        !mounted ? null : (
+            <div
+                className="min-h-screen flex flex-col items-center justify-start p-6 font-sans"
+            >
+
+                <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-2xl">
+                    <div className="flex justify-between items-center mb-4">
+                        <h1 className="text-3xl font-bold text-gray-700">Smart Swap</h1>
+                    </div>
+                    {user ? (
+                        <div className="flex justify-between items-center mb-4">
+                            <span className="text-sm font-bold text-gray-700">{user.email}</span>
+                            <button
+                                onClick={handleLogout}
+                                className="text-sm text-black hover:underline hover:text-gray-800 px-3 py-1 bg-transparent border-none shadow-none focus:outline-none"
+                                style={{ background: 'none', border: 'none', boxShadow: 'none' }}
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="mb-4">
+                            <button
+                                onClick={() => router.push('/login')}
+                                className="text-sm text-indigo-700 underline hover:text-indigo-900 px-3 py-1 bg-transparent border-none shadow-none focus:outline-none"
+                                style={{ background: 'none', border: 'none', boxShadow: 'none' }}
+                            >
+                                Sign In
+                            </button>
                         </div>
                     )}
-                    <button
-                        onClick={handleLogout}
-                        className="text-sm bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
-                    >
-                        Logout
-                    </button>
+                    <label className="block text-sm font-semibold mb-2">Ingredient to Substitute:</label>
+                    <div className="flex gap-2 mb-4">
+                        <input
+                            type="text"
+                            value={ingredientInput}
+                            onChange={(e) => setIngredientInput(e.target.value)}
+                            className="flex-1 border border-gray-300 rounded px-4 py-2"
+                            placeholder="e.g., Butter"
+                            disabled={loading}
+                        />
+                        <button
+                            onClick={handleTextSearch}
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                            disabled={loading || !ingredientInput.trim()}
+                        >
+                            Submit
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-2xl">
-                <label className="block text-sm font-semibold mb-2">Ingredient to Substitute:</label>
-                <div className="flex gap-2 mb-4">
-                    <input
-                        type="text"
-                        value={ingredientInput}
-                        onChange={(e) => setIngredientInput(e.target.value)}
-                        className="flex-1 border border-gray-300 rounded px-4 py-2"
-                        placeholder="e.g., Butter"
-                        disabled={loading}
-                    />
-                    <button
-                        onClick={handleTextSearch}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                        disabled={loading || !ingredientInput.trim()}
-                    >
-                        Submit
-                    </button>
-                </div>
-            </div>
+                {
+                    loading && (
+                        <div className="mt-6 text-gray-600">
+                            <p>Finding substitutes...</p>
+                        </div>
+                    )
+                }
 
-            {loading && (
-                <div className="mt-6 text-gray-600">
-                    <p>Finding substitutes...</p>
-                </div>
-            )}
+                {
+                    error && (
+                        <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded w-full max-w-xl">
+                            {error}
+                        </div>
+                    )
+                }
 
-            {error && (
-                <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded w-full max-w-xl">
-                    {error}
-                </div>
-            )}
-
-            {!loading && Object.keys(results).length > 0 && (
-                <div className="mt-8 w-full max-w-3xl space-y-6">
-                    {Object.entries(results).map(([ingredient, subs]) => (
-                        <div key={ingredient} className="mb-4 p-3 border-l-4 border-blue-500 bg-blue-50 rounded">
-                            <h2 className="font-semibold mb-2">Substitutes for <span className="text-indigo-700">{ingredient}</span>:</h2>
-                            {Array.isArray(subs) && subs.map((item, subIdx) => (
-                                <div key={subIdx} className="mb-2 pl-2">
-                                    <p><strong>{item.substitute}</strong> — Score: {item.score}/100</p>
-                                    <p className="text-sm text-gray-700">{item.reason}</p>
-                                    {item.cuisine_context && (
-                                        <p className="text-sm text-gray-600">Cuisine: {item.cuisine_context}</p>
-                                    )}
-                                    {item.allergen_info && (
-                                        <p className="text-sm text-red-600">Allergen Info: {item.allergen_info}</p>
-                                    )}
-                                    {item.historical_notes && (
-                                        <p className="text-sm text-gray-600 italic">History: {item.historical_notes}</p>
-                                    )}
+                {
+                    !loading && Object.keys(results).length > 0 && (
+                        <div className="mt-8 w-full max-w-3xl space-y-6">
+                            {Object.entries(results).map(([ingredient, subs]) => (
+                                <div key={ingredient} className="mb-4 p-3 border-l-4 border-blue-500 bg-blue-50 rounded">
+                                    <h2 className="font-semibold mb-2">Substitutes for <span className="text-indigo-700">{ingredient}</span>:</h2>
+                                    {Array.isArray(subs) && subs.map((item, subIdx) => (
+                                        <div key={subIdx} className="mb-2 pl-2">
+                                            <p><strong>{item.substitute}</strong> — Score: {item.score}/100</p>
+                                            <p className="text-sm text-gray-700">{item.reason}</p>
+                                            {item.cuisine_context && (
+                                                <p className="text-sm text-gray-600">Cuisine: {item.cuisine_context}</p>
+                                            )}
+                                            {item.allergen_info && (
+                                                <p className="text-sm text-red-600">Allergen Info: {item.allergen_info}</p>
+                                            )}
+                                            {item.historical_notes && (
+                                                <p className="text-sm text-gray-600 italic">History: {item.historical_notes}</p>
+                                            )}
+                                        </div>
+                                    ))}
                                 </div>
                             ))}
                         </div>
-                    ))}
-                </div>
-            )}
-        </div>
+                    )
+                }
+            </div>
+        )
     );
 }
 

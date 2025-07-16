@@ -1,6 +1,12 @@
 'use client';
 
 import { useState, useTransition, useEffect } from 'react';
+import * as Select from '@radix-ui/react-select';
+import * as Slider from '@radix-ui/react-slider';
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
+import { useRouter } from 'next/navigation';
+import { saveSettingsAction } from '../(app)/settings/action';
+
 
 // Simple utility function for conditional classes
 function cn(...classes: (string | undefined | null | false)[]): string {
@@ -29,7 +35,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Set
     const [settings, setSettings] = useState(initialSettings);
     const [isPending, startTransition] = useTransition();
     const [isDirty, setIsDirty] = useState(false);
-
+    const router = useRouter();
     useEffect(() => {
         setIsDirty(JSON.stringify(settings) !== JSON.stringify(initialSettings));
     }, [settings, initialSettings]);
@@ -37,12 +43,14 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Set
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         startTransition(async () => {
-            // Save settings to localStorage
-            localStorage.setItem('userSettings', JSON.stringify(settings));
+            await saveSettingsAction(settings);
             setIsDirty(false);
-            // Redirect to smart-swap
-            window.location.href = '/smart-swap';
+            router.push("/smart-swap");
         });
+    };
+
+    const handleSliderChange = (key: keyof Settings) => (value: number[]) => {
+        setSettings(prev => ({ ...prev, [key]: value[0] }));
     };
 
     return (
@@ -60,16 +68,31 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Set
                                 Dietary Restriction
                             </label>
                             <div className="mt-2">
-                                <select
-                                    value={settings.diet}
-                                    onChange={(e) => setSettings(prev => ({ ...prev, diet: e.target.value }))}
-                                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                    <option value="">Select a diet...</option>
-                                    {dietOptions.map(option => (
-                                        <option key={option} value={option}>{option}</option>
-                                    ))}
-                                </select>
+                                <Select.Root value={settings.diet} onValueChange={(value) => setSettings(prev => ({ ...prev, diet: value }))}>
+                                    <Select.Trigger className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                        <Select.Value placeholder="Select a diet..." />
+                                        <Select.Icon>
+                                            <ChevronDownIcon />
+                                        </Select.Icon>
+                                    </Select.Trigger>
+                                    <Select.Portal>
+                                        <Select.Content position="popper" className="relative z-50 min-w-[8rem] overflow-hidden rounded-md border bg-white text-gray-900 shadow-md">
+                                            <Select.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white text-gray-600 cursor-default">
+                                                <ChevronUpIcon />
+                                            </Select.ScrollUpButton>
+                                            <Select.Viewport className="p-[5px]">
+                                                {dietOptions.map(option => (
+                                                    <Select.Item key={option} value={option} className="text-[13px] leading-none text-gray-900 rounded-[3px] flex items-center h-[25px] pr-[35px] pl-[25px] relative select-none data-[disabled]:text-gray-400 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-gray-100 data-[highlighted]:text-gray-900">
+                                                        <Select.ItemText>{option}</Select.ItemText>
+                                                        <Select.ItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
+                                                            <CheckIcon />
+                                                        </Select.ItemIndicator>
+                                                    </Select.Item>
+                                                ))}
+                                            </Select.Viewport>
+                                        </Select.Content>
+                                    </Select.Portal>
+                                </Select.Root>
                             </div>
                         </div>
 
@@ -78,7 +101,8 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Set
                                 Allergies
                             </label>
                             <div className="mt-2">
-                                <p className="text-sm text-gray-500 mb-2">Select all that apply:</p>
+                                {/* A proper multi-select would be better here, maybe from a library like react-select */}
+                                <p className="text-sm text-gray-500 mb-2">Select all that apply (multi-select coming soon):</p>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                                     {allergyOptions.map(allergy => (
                                         <button
@@ -125,16 +149,18 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Set
                         ].map(({ key, label, minLabel, maxLabel }) => (
                             <div key={key} className="sm:col-span-6">
                                 <label htmlFor={key} className="block text-sm font-medium leading-6 text-gray-900">{label}</label>
-                                <input
-                                    type="range"
-                                    min="1"
-                                    max="5"
-                                    step="1"
-                                    value={settings[key as keyof Settings] as number}
-                                    onChange={(e) => setSettings(prev => ({ ...prev, [key]: parseInt(e.target.value) }))}
-                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                                <Slider.Root
+                                    className="relative flex items-center select-none touch-none w-full h-5"
+                                    defaultValue={[settings[key as keyof Settings] as number]}
+                                    onValueChange={handleSliderChange(key as keyof Settings)}
+                                    max={5} step={1}
                                     id={key}
-                                />
+                                >
+                                    <Slider.Track className="bg-gray-200 relative grow rounded-full h-[3px]">
+                                        <Slider.Range className="absolute bg-blue-600 rounded-full h-full" />
+                                    </Slider.Track>
+                                    <Slider.Thumb className="block w-5 h-5 bg-white shadow-md rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" />
+                                </Slider.Root>
                                 <div className="flex justify-between text-xs text-gray-500 mt-1">
                                     <span>{minLabel}</span>
                                     <span>{maxLabel}</span>
