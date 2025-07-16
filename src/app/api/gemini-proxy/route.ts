@@ -1,6 +1,8 @@
 // app/api/gemini-proxy/route.ts
+
 export async function POST(req: Request) {
     const apiKey = process.env.GEMINI_API_KEY;
+
     if (!apiKey) {
         return new Response(JSON.stringify({ error: 'Missing GEMINI_API_KEY' }), {
             status: 500,
