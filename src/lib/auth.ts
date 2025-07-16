@@ -80,7 +80,9 @@ export const auth = (async () => {
 
   const trustedOrigins = [
     "http://localhost:3000",
-    "http://192.168.1.191:3000",
+    "https://ingredient-tuyentrans-projects.vercel.app",
+    "https://ingredient.app",
+    "https://ingredientimposter.xyz",
     process.env.NEXT_PUBLIC_APP_URL,
     process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
   ].filter((origin): origin is string => typeof origin === 'string');
