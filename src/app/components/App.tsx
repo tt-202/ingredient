@@ -35,8 +35,8 @@ function App() {
             setLoading(false);
             return;
         }
-        const apiUrl = '/api/gemini-proxy';
-        //const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
         const allResults: { [ingredient: string]: any[] } = {};
 
         for (const ingredient of ingredients) {
