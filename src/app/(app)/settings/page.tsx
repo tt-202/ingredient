@@ -69,6 +69,14 @@ export default function SettingsPage() {
             {/* Main Content */}
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <SettingsForm initialSettings={settings} />
+                <div className="mt-8 text-center">
+                    <a
+                        href="/login"
+                        className="inline-flex items-center gap-1 text-indigo-700 hover:underline hover:text-indigo-900 text-sm font-medium transition-colors duration-200"
+                    >
+                        <span aria-hidden="true">&#8592;</span> Go back to login
+                    </a>
+                </div>
             </div>
         </div>
     );

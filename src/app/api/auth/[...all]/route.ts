@@ -36,21 +36,21 @@ async function addCorsHeaders(res: Response) {
     });
 }
 
-//export async function POST(req: Request) {
-//  const h = await getHandler();
-//const res = await h.POST(req);
-//return addCorsHeaders(res);
-//}
-
 export async function POST(req: Request) {
-    // Example: echo back the request body, or put your real logic here
-    const body = await req.json();
-    // ... your Gemini logic here ...
-    return new Response(JSON.stringify({ message: "Public access allowed", body }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-    });
+    const h = await getHandler();
+    const res = await h.POST(req);
+    return addCorsHeaders(res);
 }
+
+//export async function POST(req: Request) {
+// Example: echo back the request body, or put your real logic here
+//  const body = await req.json();
+// ... your Gemini logic here ...
+//return new Response(JSON.stringify({ message: "Public access allowed", body }), {
+//  status: 200,
+//  headers: { "Content-Type": "application/json" },
+// });
+//}
 
 export async function GET(req: Request) {
     const h = await getHandler();

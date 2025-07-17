@@ -191,10 +191,10 @@ export default function ContactPage() {
                 {/* Back to Smart Swap */}
                 <div className="text-center mt-8">
                     <button
-                        onClick={() => router.push('/smart-swap')}
+                        onClick={() => router.push('/login')}
                         className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
                     >
-                        ← Back to Smart Swap
+                        ← Back to Login
                     </button>
                 </div>
             </div>

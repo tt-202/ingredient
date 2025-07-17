@@ -82,7 +82,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                   Contact Us
                 </Link>
               </div>
-              <div>© Ingredient Imposter 2025</div>
+              <div>© Ingredient Imposter {new Date().getFullYear()}</div>
             </div>
           </div>
         </footer>
