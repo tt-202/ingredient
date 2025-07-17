@@ -13,6 +13,10 @@ function App() {
     const [error, setError] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(null);
     const [mounted, setMounted] = useState(false);
+    const [searchHistory, setSearchHistory] = useState<{ ingredient: string; allergen?: string; date: string; userAllergies?: string[] }[]>([]);
+
+    // Helper to get the localStorage key for the current user
+    const getHistoryKey = (email?: string | null) => email ? `smartSwapSearchHistory:${email}` : '';
 
     useEffect(() => {
         setMounted(true);
@@ -21,6 +25,20 @@ function App() {
         });
         return () => unsubscribe();
     }, []);
+
+    // Load user-specific search history when user changes
+    useEffect(() => {
+        if (user && user.email) {
+            const history = localStorage.getItem(getHistoryKey(user.email));
+            if (history) {
+                setSearchHistory(JSON.parse(history));
+            } else {
+                setSearchHistory([]);
+            }
+        } else {
+            setSearchHistory([]);
+        }
+    }, [user]);
 
     const findSubstitutes = async (ingredients: string[]) => {
         setLoading(true);
@@ -86,6 +104,27 @@ function App() {
                 }
 
                 allResults[ingredient] = parsed;
+
+                // Save allergen_info from the first result in search history (if available)
+                const allergen = Array.isArray(parsed) && parsed[0]?.allergen_info ? parsed[0].allergen_info : undefined;
+                const now = new Date().toISOString();
+                // Get user allergies from localStorage
+                let userAllergies: string[] | undefined = undefined;
+                if (user && user.email) {
+                    const stored = localStorage.getItem(`userAllergies:${user.email}`);
+                    if (stored) {
+                        try {
+                            userAllergies = JSON.parse(stored);
+                        } catch { }
+                    }
+                }
+                const newEntry = { ingredient, allergen, date: now, userAllergies };
+                let updatedHistory = [newEntry, ...searchHistory.filter(h => h.ingredient !== ingredient)];
+                updatedHistory = updatedHistory.slice(0, 10);
+                setSearchHistory(updatedHistory);
+                if (user && user.email) {
+                    localStorage.setItem(getHistoryKey(user.email), JSON.stringify(updatedHistory));
+                }
             } catch (err: any) {
                 setError(`Error for ingredient "${ingredient}": ${err.message}`);
             }
@@ -142,6 +181,47 @@ function App() {
                             >
                                 Sign In
                             </button>
+                        </div>
+                    )}
+                    {/* Search History */}
+                    {/* User Allergies Display */}
+                    {user && user.email && (() => {
+                        const stored = localStorage.getItem(`userAllergies:${user.email}`);
+                        if (stored) {
+                            try {
+                                const allergies = JSON.parse(stored);
+                                if (Array.isArray(allergies) && allergies.length > 0) {
+                                    return (
+                                        <div className="w-full max-w-2xl mb-2">
+                                            <div className="bg-blue-50 text-blue-800 rounded-lg px-4 py-2 font-semibold text-sm">
+                                                User Allergies: {allergies.join(', ')}
+                                            </div>
+                                        </div>
+                                    );
+                                }
+                            } catch { }
+                        }
+                        return null;
+                    })()}
+                    {searchHistory.length > 0 && (
+                        <div className="w-full max-w-2xl mb-6">
+                            <h2 className="text-lg font-semibold mb-2 text-gray-700">Search History</h2>
+                            <ul className="bg-gray-50 rounded-lg shadow p-4 divide-y divide-gray-200">
+                                {searchHistory.map((entry, idx) => (
+                                    <li key={idx} className="py-2 flex flex-col sm:flex-row sm:justify-between sm:items-center">
+                                        <div>
+                                            <span className="font-medium text-gray-900">{entry.ingredient}</span>
+                                            {entry.allergen && (
+                                                <span className="ml-2 text-xs text-red-600 bg-red-50 px-2 py-0.5 rounded">Allergy: {entry.allergen}</span>
+                                            )}
+                                            {entry.userAllergies && entry.userAllergies.length > 0 && (
+                                                <span className="ml-2 text-xs text-blue-700 bg-blue-50 px-2 py-0.5 rounded">User Allergies: {entry.userAllergies.join(', ')}</span>
+                                            )}
+                                        </div>
+                                        <span className="text-xs text-gray-500">{new Date(entry.date).toLocaleString()}</span>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     )}
                     <label className="block text-sm font-semibold mb-2">Ingredient to Substitute:</label>

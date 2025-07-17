@@ -5,6 +5,8 @@ import * as Select from '@radix-ui/react-select';
 import * as Slider from '@radix-ui/react-slider';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import { saveSettingsAction } from '../(app)/settings/action';
 
 
@@ -36,6 +38,13 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Set
     const [isPending, startTransition] = useTransition();
     const [isDirty, setIsDirty] = useState(false);
     const router = useRouter();
+    const [userEmail, setUserEmail] = useState<string | null>(null);
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUserEmail(user?.email ?? null);
+        });
+        return () => unsubscribe();
+    }, []);
     useEffect(() => {
         setIsDirty(JSON.stringify(settings) !== JSON.stringify(initialSettings));
     }, [settings, initialSettings]);
@@ -45,6 +54,10 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Set
         startTransition(async () => {
             await saveSettingsAction(settings);
             setIsDirty(false);
+            // Save allergies to localStorage for this user
+            if (userEmail) {
+                localStorage.setItem(`userAllergies:${userEmail}`, JSON.stringify(settings.allergies));
+            }
             router.push("/smart-swap");
         });
     };
