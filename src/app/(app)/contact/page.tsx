@@ -152,7 +152,7 @@ export default function ContactPage() {
                             <div className="space-y-3">
                                 <div className="flex items-center">
                                     <span className="text-gray-500 mr-3">📧</span>
-                                    <span className="text-gray-700">tuyentran02@yahoo.com</span>
+                                    <span className="text-gray-700">group19@ucf.edu</span>
                                 </div>
                                 <div className="flex items-center">
                                     <span className="text-gray-500 mr-3">📱</span>
