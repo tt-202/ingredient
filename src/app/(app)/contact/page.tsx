@@ -47,7 +47,7 @@ const teamMembers: TeamMember[] = [
         name: "Tuyen Tran",
         role: "Frontend/Backend Developer",
         description: "Specializes in React. Creates the frontend and backend of the app.",
-        avatar: "👨‍🔧",
+        avatar: "👩‍💻",
         color: "bg-orange-500"
     }
 ];
