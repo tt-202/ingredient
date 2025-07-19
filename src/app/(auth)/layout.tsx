@@ -8,16 +8,18 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
         minHeight: '100vh',
         position: 'relative',
       }}
     >
-      {/* Optional: Dim overlay for readability */}
+      {/* White overlay for better readability */}
       <div
         style={{
-          position: 'absolute',
+          position: 'fixed',
           inset: 0,
-          background: 'rgba(0,0,0,0.4)',
+          background: 'rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(1px)',
           zIndex: 1,
           pointerEvents: 'none',
         }}
