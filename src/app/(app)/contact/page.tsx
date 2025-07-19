@@ -102,9 +102,7 @@ export default function ContactPage() {
                                         className="w-full h-full object-cover"
                                     />
                                 </div>
-                                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 bg-clip-text text-transparent">
-                                    Contact Our Team
-                                </h1>
+                                
                             </div>
                             <div className="flex items-center gap-3">
                                 {user && (
