@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface TeamMember {
     name: string;
@@ -73,129 +74,156 @@ export default function ContactPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50">
-            {/* Header */}
-            <div className="bg-white shadow-sm border-b">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center py-4">
-                        <h1 className="text-3xl font-bold text-gray-900">Contact Our Team</h1>
-                        <div className="flex items-center gap-3">
-                            {user && (
-                                <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded border">
-                                    {user.email}
+        <div className="min-h-screen flex items-center justify-center py-7 px-4 sm:px-6 lg:px-8">
+            <div className="relative w-full max-w-7xl mx-4">
+                {/* Glass morphism container */}
+                <div className="relative bg-white/30 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+                    {/* Animated gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-gray-100/40 to-gray-200/40 animate-pulse"></div>
+
+                    {/* Floating particles */}
+                    <div className="absolute inset-0 overflow-hidden">
+                        <div className="absolute top-10 left-10 w-2 h-2 bg-white/70 rounded-full animate-bounce"></div>
+                        <div className="absolute top-20 right-16 w-1 h-1 bg-gray-200/80 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+                        <div className="absolute bottom-16 left-20 w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '1s' }}></div>
+                        <div className="absolute bottom-8 right-8 w-1 h-1 bg-gray-100/70 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+                    </div>
+
+                    <div className="relative z-10 p-8">
+                        {/* Header */}
+                        <div className="flex justify-between items-center mb-8">
+                            <div className="flex items-center gap-4">
+                                <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-white to-gray-100 rounded-full shadow-lg overflow-hidden">
+                                    <Image
+                                        src="/icon.jpg"
+                                        alt="App Icon"
+                                        width={48}
+                                        height={48}
+                                        className="w-full h-full object-cover"
+                                    />
                                 </div>
-                            )}
+                                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 bg-clip-text text-transparent">
+                                    Contact Our Team
+                                </h1>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                {user && (
+                                    <span className="text-sm font-bold text-gray-700 bg-white/40 px-3 py-2 rounded-lg border border-white/60">
+                                        {user.email}
+                                    </span>
+                                )}
+                                <button
+                                    onClick={handleLogout}
+                                    className="text-sm text-gray-600 hover:text-gray-800 hover:underline transition-colors"
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Introduction */}
+                        <div className="text-center mb-12">
+                            <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 bg-clip-text text-transparent mb-4">
+                                Meet Our Team
+                            </h2>
+                            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+                                We're a passionate team dedicated to creating innovative solutions.
+                                Each member brings unique expertise to deliver exceptional results.
+                            </p>
+                        </div>
+
+                        {/* Team Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                            {teamMembers.map((member, index) => (
+                                <div
+                                    key={index}
+                                    className="bg-white/40 backdrop-blur-sm rounded-xl border border-white/60 hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:scale-105"
+                                >
+                                    {/* Avatar and Role Badge */}
+                                    <div className={`${member.color} p-6 text-center`}>
+                                        <div className="text-4xl mb-3">{member.avatar}</div>
+                                        <div className="inline-block bg-white/20 backdrop-blur-sm rounded-full px-4 py-1 text-sm font-medium text-white">
+                                            {member.role}
+                                        </div>
+                                    </div>
+
+                                    {/* Member Info */}
+                                    <div className="p-6">
+                                        <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                                            {member.name}
+                                        </h3>
+                                        <p className="text-gray-600 leading-relaxed">
+                                            {member.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Contact Information */}
+                        <div className="bg-white/40 backdrop-blur-sm rounded-xl border border-white/60 p-8">
+                            <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 bg-clip-text text-transparent mb-6 text-center">
+                                Get In Touch
+                            </h3>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {/* Contact Details */}
+                                <div>
+                                    <h4 className="text-lg font-semibold text-gray-800 mb-4">
+                                        Contact Information
+                                    </h4>
+                                    <div className="space-y-3">
+                                        <div className="flex items-center">
+                                            <span className="text-gray-500 mr-3">📧</span>
+                                            <span className="text-gray-700">group19@ucf.edu</span>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <span className="text-gray-500 mr-3">📱</span>
+                                            <span className="text-gray-700">+1 (407) 823-2000</span>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <span className="text-gray-500 mr-3">📍</span>
+                                            <span className="text-gray-700">UCF Orlando, FL</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Office Hours */}
+                                <div>
+                                    <h4 className="text-lg font-semibold text-gray-800 mb-4">
+                                        Office Hours
+                                    </h4>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-600">Monday - Friday</span>
+                                            <span className="text-gray-800 font-medium">9:00 AM - 6:00 PM</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-600">Saturday</span>
+                                            <span className="text-gray-800 font-medium">10:00 AM - 4:00 PM</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-600">Sunday</span>
+                                            <span className="text-gray-800 font-medium">Closed</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Back to Login */}
+                        <div className="text-center mt-8">
                             <button
-                                onClick={handleLogout}
-                                className="text-black px-4 py-2 rounded-lg hover:underline transition-colors"
+                                onClick={() => router.push('/login')}
+                                className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-500 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium"
                             >
-                                Logout
+                                ← Back to Login
                             </button>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                {/* Introduction */}
-                <div className="text-center mb-12">
-                    <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                        Meet Our Team
-                    </h2>
-                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                        We're a passionate team dedicated to creating innovative solutions.
-                        Each member brings unique expertise to deliver exceptional results.
-                    </p>
-                </div>
-
-                {/* Team Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                    {teamMembers.map((member, index) => (
-                        <div
-                            key={index}
-                            className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden"
-                        >
-                            {/* Avatar and Role Badge */}
-                            <div className={`${member.color} p-6 text-center`}>
-                                <div className="text-4xl mb-3">{member.avatar}</div>
-                                <div className="inline-block bg-white/20 backdrop-blur-sm rounded-full px-4 py-1 text-sm font-medium text-white">
-                                    {member.role}
-                                </div>
-                            </div>
-
-                            {/* Member Info */}
-                            <div className="p-6">
-                                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                                    {member.name}
-                                </h3>
-                                <p className="text-gray-600 leading-relaxed">
-                                    {member.description}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Contact Information */}
-                <div className="bg-white rounded-xl shadow-lg p-8">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-                        Get In Touch
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Contact Details */}
-                        <div>
-                            <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                                Contact Information
-                            </h4>
-                            <div className="space-y-3">
-                                <div className="flex items-center">
-                                    <span className="text-gray-500 mr-3">📧</span>
-                                    <span className="text-gray-700">group19@ucf.edu</span>
-                                </div>
-                                <div className="flex items-center">
-                                    <span className="text-gray-500 mr-3">📱</span>
-                                    <span className="text-gray-700">+1 (407) 823-2000</span>
-                                </div>
-                                <div className="flex items-center">
-                                    <span className="text-gray-500 mr-3">📍</span>
-                                    <span className="text-gray-700">UCF Orlando, FL</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Office Hours */}
-                        <div>
-                            <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                                Office Hours
-                            </h4>
-                            <div className="space-y-2">
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Monday - Friday</span>
-                                    <span className="text-gray-900 font-medium">9:00 AM - 6:00 PM</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Saturday</span>
-                                    <span className="text-gray-900 font-medium">10:00 AM - 4:00 PM</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Sunday</span>
-                                    <span className="text-gray-900 font-medium">Closed</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Back to Smart Swap */}
-                <div className="text-center mt-8">
-                    <button
-                        onClick={() => router.push('/login')}
-                        className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
-                    >
-                        ← Back to Login
-                    </button>
+                    {/* Bottom decorative element */}
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-white via-gray-100 to-gray-200"></div>
                 </div>
             </div>
         </div>

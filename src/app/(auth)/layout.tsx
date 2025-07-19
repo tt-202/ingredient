@@ -4,7 +4,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div
       style={{
-        backgroundImage: "url('/background.jpg')",
+        backgroundImage: "url('/icon.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

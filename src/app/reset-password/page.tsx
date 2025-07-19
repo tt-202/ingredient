@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { resetPassword } from '@/lib/auth-client';
 import { useSearchParams } from 'next/navigation';
 import ClientWrapper from '@/app/components/ClientWrapper';
+import Image from 'next/image';
 
 export default function ResetPasswordPage() {
     return (
@@ -74,143 +75,156 @@ function ResetPasswordContent() {
     };
 
     const content = status === 'success' ? (
-        <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
-            <div>
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                    Password Reset Complete
-                </h2>
-                <p className="mt-2 text-center text-sm text-gray-600">
-                    Your password has been successfully reset. You can now log in with your new password.
-                </p>
-            </div>
-            <div className="text-center">
-                <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-                    Go to login
-                </Link>
+        <div className="relative max-w-md w-full mx-4">
+            {/* Glass morphism container */}
+            <div className="relative bg-white/30 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+                {/* Animated gradient background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-green-100/40 via-emerald-100/40 to-teal-100/40 animate-pulse"></div>
+
+                {/* Floating particles */}
+                <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute top-10 left-10 w-2 h-2 bg-green-200/70 rounded-full animate-bounce"></div>
+                    <div className="absolute top-20 right-16 w-1 h-1 bg-emerald-200/80 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+                    <div className="absolute bottom-16 left-20 w-1.5 h-1.5 bg-teal-200/60 rounded-full animate-bounce" style={{ animationDelay: '1s' }}></div>
+                </div>
+
+                <div className="relative z-10 p-8 text-center space-y-6">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mb-4 shadow-lg">
+                        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h2 className="text-3xl font-bold text-gray-800">
+                        Password Reset Complete
+                    </h2>
+                    <p className="text-gray-600">
+                        Your password has been successfully reset. You can now log in with your new password.
+                    </p>
+                    <Link href="/login" className="inline-block text-gray-600 hover:text-gray-700 transition-colors font-medium">
+                        Go to login
+                    </Link>
+                </div>
+
+                {/* Bottom decorative element */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500"></div>
             </div>
         </div>
     ) : (
-        <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
-            <div>
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                    Reset Your Password
-                </h2>
-                <p className="mt-2 text-center text-sm text-gray-600">
-                    Enter your new password below.
-                </p>
+        <div className="relative max-w-md w-full mx-4">
+            {/* Glass morphism container */}
+            <div className="relative bg-white/30 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+                {/* Animated gradient background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-gray-100/40 to-gray-200/40 animate-pulse"></div>
+
+                {/* Floating particles */}
+                <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute top-10 left-10 w-2 h-2 bg-white/70 rounded-full animate-bounce"></div>
+                    <div className="absolute top-20 right-16 w-1 h-1 bg-gray-200/80 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+                    <div className="absolute bottom-16 left-20 w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '1s' }}></div>
+                </div>
+
+                <div className="relative z-10 p-8">
+                    {/* Header */}
+                    <div className="text-center mb-8">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-white to-gray-100 rounded-full mb-4 shadow-lg overflow-hidden">
+                            <Image
+                                src="/icon.jpg"
+                                alt="App Icon"
+                                width={64}
+                                height={64}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                        <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 bg-clip-text text-transparent mb-2">
+                            Reset Your Password
+                        </h2>
+                        <p className="text-gray-700 text-lg">
+                            Enter your new password below.
+                        </p>
+                    </div>
+
+                    {/* Form */}
+                    <form className="space-y-6" onSubmit={handleSubmit}>
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <label htmlFor="new-password" className="block text-sm font-medium text-gray-700">
+                                    New Password
+                                </label>
+                                <input
+                                    id="new-password"
+                                    name="newPassword"
+                                    type="password"
+                                    required
+                                    minLength={8}
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    className="w-full bg-white/40 backdrop-blur-sm border border-white/60 rounded-xl px-4 py-3 text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
+                                    placeholder="New password"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
+                                    Confirm Password
+                                </label>
+                                <input
+                                    id="confirm-password"
+                                    name="confirmPassword"
+                                    type="password"
+                                    required
+                                    minLength={8}
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    className="w-full bg-white/40 backdrop-blur-sm border border-white/60 rounded-xl px-4 py-3 text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
+                                    placeholder="Confirm new password"
+                                />
+                            </div>
+                        </div>
+
+                        {validationError && (
+                            <div className="p-3 bg-red-100 border border-red-300 rounded-xl text-red-700 text-sm">
+                                {validationError}
+                            </div>
+                        )}
+
+                        <button
+                            type="submit"
+                            disabled={status === 'loading' || status === 'error' || !token}
+                            className="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-4 px-6 rounded-xl font-medium hover:from-gray-700 hover:to-gray-800 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                        >
+                            {status === 'loading' ? (
+                                <div className="flex items-center justify-center gap-2">
+                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                    Resetting...
+                                </div>
+                            ) : (
+                                'Reset Password'
+                            )}
+                        </button>
+
+                        {status === 'error' && error && (
+                            <div className="p-3 bg-red-100 border border-red-300 rounded-xl text-red-700 text-sm">
+                                {error}
+                            </div>
+                        )}
+
+                        <div className="text-center text-sm text-gray-600">
+                            Remember your password?{' '}
+                            <Link href="/login" className="text-gray-700 hover:text-gray-800 font-medium transition-colors">
+                                Log in
+                            </Link>
+                        </div>
+                    </form>
+                </div>
+
+                {/* Bottom decorative element */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-white via-gray-100 to-gray-200"></div>
             </div>
-            <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                <div className="space-y-4">
-                    <div>
-                        <label htmlFor="new-password" className="block text-sm font-medium text-gray-700">
-                            New Password
-                        </label>
-                        <input
-                            id="new-password"
-                            name="newPassword"
-                            type="password"
-                            required
-                            minLength={8}
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                            placeholder="New password"
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
-                            Confirm Password
-                        </label>
-                        <input
-                            id="confirm-password"
-                            name="confirmPassword"
-                            type="password"
-                            required
-                            minLength={8}
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                            placeholder="Confirm new password"
-                        />
-                    </div>
-                </div>
-
-                {validationError && (
-                    <div className="rounded-md bg-red-50 p-4">
-                        <div className="flex">
-                            <div className="ml-3">
-                                <p className="text-sm font-medium text-red-800">{validationError}</p>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                <div>
-                    <button
-                        type="submit"
-                        disabled={status === 'loading' || status === 'error' || !token}
-                        className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                    >
-                        {status === 'loading' ? 'Resetting...' : 'Reset Password'}
-                    </button>
-                </div>
-
-                {status === 'error' && error && (
-                    <div className="rounded-md bg-red-50 p-4">
-                        <div className="flex">
-                            <div className="ml-3">
-                                <p className="text-sm font-medium text-red-800">{error}</p>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                <div className="text-sm text-center">
-                    <p className="text-gray-600">
-                        Remember your password?{' '}
-                        <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-                            Log in
-                        </Link>
-                    </p>
-                </div>
-            </form>
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 relative">
-            {/* Grid background pattern */}
-            <div className="absolute inset-0 bg-[#F1F5F9] bg-opacity-90">
-                <div className="absolute inset-0" style={{
-                    backgroundImage: `
-                    linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-                    linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
-                `,
-                    backgroundSize: '4rem 4rem'
-                }} />
-            </div>
-
-            {/* Content */}
-            <div className="relative min-h-screen flex flex-col">
-                <main className="flex-grow flex items-center justify-center py-7 px-4 sm:px-6 lg:px-8">
-                    {content}
-                </main>
-
-                {/* Footer */}
-                <footer className="bg-black text-gray-300">
-                    <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-4">
-                        <div className="flex flex-col sm:flex-row items-center sm:justify-center gap-4 sm:gap-12">
-                            <div>
-                                Need Help?&nbsp;
-                                <Link href="/contact" className="text-white font-medium transition-colors duration-300 hover:text-gray-300">
-                                    Contact Us
-                                </Link>
-                            </div>
-                            <div>© Ingredient App 2025</div>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+        <div className="min-h-screen flex items-center justify-center py-7 px-4 sm:px-6 lg:px-8">
+            {content}
         </div>
     );
 } 

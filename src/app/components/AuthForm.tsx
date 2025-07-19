@@ -102,41 +102,47 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
     if (verificationSent) {
         return (
-            <div className="max-w-md mx-auto p-6 space-y-4 text-center">
-                <h2 className="text-xl font-semibold">Verification Email Sent!</h2>
-                <p className="text-sm text-gray-600">
-                    A verification link has been sent to <strong>{email}</strong>. Please check your inbox.
+            <div className="text-center space-y-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mb-4 shadow-lg">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800">Verification Email Sent!</h2>
+                <p className="text-gray-600">
+                    A verification link has been sent to <strong className="text-gray-800">{email}</strong>. Please check your inbox.
                 </p>
-                <Link href="/login" className="text-indigo-600 hover:underline text-sm">
-                    Return to Login
+                <Link href="/login" className="inline-block text-gray-600 hover:text-gray-700 transition-colors text-sm">
+                    ← Return to Login
                 </Link>
             </div>
         );
     }
 
     return (
-        <div className="max-w-md mx-auto p-6 space-y-6">
+        <div className="space-y-6">
             {/* User Email Display */}
             {user && (
-                <div className="flex justify-between items-center mb-4">
-                    <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded border">
+                <div className="flex justify-between items-center p-4 bg-white/40 backdrop-blur-sm rounded-xl border border-white/60">
+                    <div className="text-sm text-gray-700 bg-white/40 px-3 py-2 rounded-lg border border-white/60">
                         {user.email}
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
+                        className="text-sm bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:from-red-600 hover:to-pink-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                     >
                         Logout
                     </button>
                 </div>
             )}
 
+            {/* Google Sign In Button */}
             <button
                 onClick={handleGoogleSignIn}
                 disabled={status === 'loading'}
-                className="w-full flex items-center justify-center gap-2 bg-white text-gray-800 border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 bg-white/40 backdrop-blur-sm text-gray-700 border border-white/60 rounded-xl px-6 py-4 hover:bg-white/50 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" viewBox="0 0 24 24">
                     <path
                         fill="currentColor"
                         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -154,67 +160,75 @@ export default function AuthForm({ mode }: AuthFormProps) {
                         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                 </svg>
-                {status === 'loading' ? 'Processing...' : 'Continue with Google'}
+                <span className="font-medium">
+                    {status === 'loading' ? 'Processing...' : 'Continue with Google'}
+                </span>
             </button>
 
+            {/* Divider */}
             <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-300" />
+                    <div className="w-full border-t border-white/60" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">Or continue with email</span>
+                    <span className="px-4 bg-transparent text-gray-600 font-medium">Or continue with email</span>
                 </div>
             </div>
 
-            <form onSubmit={handleEmailAuth} className="space-y-4">
+            {/* Email Form */}
+            <form onSubmit={handleEmailAuth} className="space-y-5">
                 {mode === 'signup' && (
-                    <div>
+                    <div className="space-y-2">
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
                         <input
                             type="text"
                             id="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="mt-1 w-full rounded border px-3 py-2 shadow-sm"
+                            className="w-full bg-white/40 backdrop-blur-sm border border-white/60 rounded-xl px-4 py-3 text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
+                            placeholder="Enter your name"
                             required
                         />
                     </div>
                 )}
 
-                <div>
+                <div className="space-y-2">
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
                     <input
                         type="email"
                         id="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="mt-1 w-full rounded border px-3 py-2 shadow-sm"
+                        className="w-full bg-white/40 backdrop-blur-sm border border-white/60 rounded-xl px-4 py-3 text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
+                        placeholder="Enter your email"
                         required
                     />
                 </div>
 
-                <div>
+                <div className="space-y-2">
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
                     <input
                         type="password"
                         id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="mt-1 w-full rounded border px-3 py-2 shadow-sm"
+                        className="w-full bg-white/40 backdrop-blur-sm border border-white/60 rounded-xl px-4 py-3 text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
+                        placeholder="Enter your password"
                         required
                         minLength={6}
                     />
                 </div>
 
                 {mode === 'signup' && (
-                    <div>
+                    <div className="space-y-2">
                         <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
                         <input
                             type="password"
                             id="confirmPassword"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="mt-1 w-full rounded border px-3 py-2 shadow-sm"
+                            className="w-full bg-white/40 backdrop-blur-sm border border-white/60 rounded-xl px-4 py-3 text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-200"
+                            placeholder="Confirm your password"
                             required
                         />
                     </div>
@@ -222,36 +236,53 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
                 {mode === 'login' && (
                     <div className="text-sm text-right">
-                        <Link href="/forgot-password" className="text-indigo-600 hover:underline">
+                        <Link href="/forgot-password" className="text-gray-600 hover:text-gray-700 transition-colors">
                             Forgot password?
                         </Link>
                     </div>
                 )}
 
                 {validationError && (
-                    <p className="text-sm text-red-600">{validationError}</p>
+                    <div className="p-3 bg-red-100 border border-red-300 rounded-xl text-red-700 text-sm">
+                        {validationError}
+                    </div>
                 )}
 
                 <button
                     type="submit"
-                    className="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 disabled:opacity-50"
+                    className="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-4 px-6 rounded-xl font-medium hover:from-gray-700 hover:to-gray-800 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                     disabled={status === 'loading'}
                 >
-                    {status === 'loading' ? 'Processing...' : mode === 'login' ? 'Sign In' : 'Sign Up'}
+                    {status === 'loading' ? (
+                        <div className="flex items-center justify-center gap-2">
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            Processing...
+                        </div>
+                    ) : (
+                        mode === 'login' ? 'Sign In' : 'Sign Up'
+                    )}
                 </button>
 
-                {error && <p className="text-sm text-red-600">{error}</p>}
+                {error && (
+                    <div className="p-3 bg-red-100 border border-red-300 rounded-xl text-red-700 text-sm">
+                        {error}
+                    </div>
+                )}
 
-                <div className="text-center text-sm">
+                <div className="text-center text-sm text-gray-600">
                     {mode === 'login' ? (
                         <>
                             Don't have an account?{' '}
-                            <Link href="/signup" className="text-indigo-600 hover:underline">Sign up</Link>
+                            <Link href="/signup" className="text-gray-700 hover:text-gray-800 font-medium transition-colors">
+                                Sign up
+                            </Link>
                         </>
                     ) : (
                         <>
                             Already have an account?{' '}
-                            <Link href="/login" className="text-indigo-600 hover:underline">Sign in</Link>
+                            <Link href="/login" className="text-gray-700 hover:text-gray-800 font-medium transition-colors">
+                                Sign in
+                            </Link>
                         </>
                     )}
                 </div>
