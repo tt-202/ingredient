@@ -25,8 +25,8 @@ export default function WelcomePage() {
             <p className="text-xl leading-8 text-gray-700 max-w-2xl mx-auto">
               Replace ingredients in recipes with other ingredients.
             </p>
+          </div>
 
-          
           {/* Bottom decorative element */}
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-white via-gray-100 to-gray-200"></div>
         </div>
