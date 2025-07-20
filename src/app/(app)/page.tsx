@@ -26,14 +26,7 @@ export default function WelcomePage() {
               Replace ingredients in recipes with other ingredients.
             </p>
 
-            {/* Decorative elements */}
-            <div className="mt-12 flex justify-center space-x-4">
-              <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }}></div>
-              <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '0.6s' }}></div>
-            </div>
-          </div>
-
+          
           {/* Bottom decorative element */}
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-white via-gray-100 to-gray-200"></div>
         </div>
