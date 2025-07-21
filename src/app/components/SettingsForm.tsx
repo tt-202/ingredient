@@ -34,7 +34,10 @@ type Settings = {
 };
 
 export default function SettingsForm({ initialSettings }: { initialSettings: Settings }) {
-    const [settings, setSettings] = useState(initialSettings);
+    const [settings, setSettings] = useState<Settings>(() => {
+        const saved = typeof window !== 'undefined' ? localStorage.getItem('userSettings') : null;
+        return saved ? JSON.parse(saved) : initialSettings;
+    });
     const [isPending, startTransition] = useTransition();
     const [isDirty, setIsDirty] = useState(false);
     const router = useRouter();
@@ -48,6 +51,13 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Set
     useEffect(() => {
         setIsDirty(JSON.stringify(settings) !== JSON.stringify(initialSettings));
     }, [settings, initialSettings]);
+    // Always reload settings from localStorage when the component mounts
+    useEffect(() => {
+        const saved = localStorage.getItem('userSettings');
+        if (saved) {
+            setSettings(JSON.parse(saved));
+        }
+    }, []);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -58,6 +68,8 @@ export default function SettingsForm({ initialSettings }: { initialSettings: Set
             if (userEmail) {
                 localStorage.setItem(`userAllergies:${userEmail}`, JSON.stringify(settings.allergies));
             }
+            // Save full settings to localStorage for persistence
+            localStorage.setItem('userSettings', JSON.stringify(settings));
             router.push("/smart-swap");
         });
     };

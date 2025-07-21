@@ -22,10 +22,17 @@ export default function SettingsPage() {
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        const savedSettings = localStorage.getItem('userSettings');
-        if (savedSettings) {
-            setSettings(JSON.parse(savedSettings));
+        function handleStorageChange() {
+            const savedSettings = localStorage.getItem('userSettings');
+            if (savedSettings) {
+                setSettings(JSON.parse(savedSettings));
+            }
         }
+        // Initial load
+        handleStorageChange();
+        // Listen for storage changes (in case of multi-tab)
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
     useEffect(() => {

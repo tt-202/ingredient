@@ -37,4 +37,5 @@ describe('Auth Client Mock', () => {
     it('is a valid mock', () => {
         expect(true).toBe(true);
     });
-}); 
+});
+

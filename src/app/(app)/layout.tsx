@@ -18,27 +18,33 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <Link href="/" className="text-xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 bg-clip-text text-transparent">
                 Ingredient Imposter
               </Link>
+              <Link
+                href="/smart-swap"
+                className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                Smart Swap
+              </Link>
+              <Link
+                href="/settings"
+                className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                Settings
+              </Link>
               {!isPending && session?.user && (
                 <>
                   <Link
                     href="/upload"
-                    className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors bg-white/40 px-3 py-2 rounded-lg border border-white/60 hover:bg-white/60"
+                    className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
                   >
                     <Upload className="w-5 h-5" />
-                    <span className="text-sm font-medium">Upload</span>
-                  </Link>
-                  <Link
-                    href="/smart-swap"
-                    className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors bg-white/40 px-3 py-2 rounded-lg border border-white/60 hover:bg-white/60"
-                  >
-                    <span className="text-sm font-medium">Smart Swap</span>
+                    Upload
                   </Link>
                 </>
               )}
             </div>
             <Link
               href="/account"
-              className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors bg-white/40 px-3 py-2 rounded-lg border border-white/60 hover:bg-white/60"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
             >
               {isPending ? (
                 <LoadingSpinner size="w-6 h-6" />
