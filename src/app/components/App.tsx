@@ -350,7 +350,7 @@ function App() {
                                                                     return;
                                                                 }
                                                                 setHistoryResult({ [entry.ingredient]: parsed });
-                                                            } catch (err: any) {
+                                                            } catch {
                                                                 setError('Error fetching result.');
                                                             }
                                                             setLoading(false);
