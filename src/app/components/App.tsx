@@ -83,7 +83,7 @@ function App() {
 
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
         const allResults: { [ingredient: string]: any[] } = {};
-        let newHistoryEntries: any[] = [];
+        const newHistoryEntries: any[] = [];
 
         for (const ingredient of ingredients) {
             const prompt = `For the ingredient '${ingredient}', suggest 1–3 suitable substitutes. For each suggestion, return:\n- 'substitute'\n- 'score' (0–100 relevance)\n- 'reason'\n- 'cuisine_context' (optional)\n- 'allergen_info' (e.g. dairy, nuts)\n- 'historical_notes' (brief food history). Return the output as a JSON array.`;
@@ -128,8 +128,8 @@ function App() {
                 let parsed;
                 try {
                     parsed = JSON.parse(jsonString);
-                } catch (err) {
-                    console.warn('Failed to parse Gemini response:', err);
+                } catch {
+                    console.warn('Failed to parse Gemini response');
                     throw new Error('Failed to parse Gemini response as JSON.');
                 }
 
@@ -344,7 +344,7 @@ function App() {
                                                                 let parsed;
                                                                 try {
                                                                     parsed = JSON.parse(jsonString);
-                                                                } catch (err) {
+                                                                } catch {
                                                                     setError('Failed to parse result.');
                                                                     setLoading(false);
                                                                     return;
@@ -441,7 +441,7 @@ function App() {
                                         // Scoring: penalize allergens, reward preference match
                                         const scored = substitutes.map((sub, idx) => {
                                             let score = sub.score || 0;
-                                            let explanation = [];
+                                            const explanation = [];
                                             let hasAllergen = false;
                                             if (sub.allergen_info && allergyList.some((a: string) => sub.allergen_info.toLowerCase().includes(a.toLowerCase()))) {
                                                 score -= 1000; // Big penalty for allergens
