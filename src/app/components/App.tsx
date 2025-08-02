@@ -398,7 +398,7 @@ function App() {
                                     />
                                     <button
                                         onClick={handleTextSearch}
-                                        className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-500 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                                        className="bg-gray-400 text-white px-6 py-3 rounded-xl hover:bg-gray-500 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                                         disabled={loading || !ingredientInput.trim()}
                                     >
                                         {loading ? (
@@ -508,6 +508,22 @@ function App() {
                                     })}
                                 </div>
                             )}
+
+                            {/* Action Buttons */}
+                            <div className="mt-8 flex justify-center gap-4">
+                                <button
+                                    onClick={() => router.push('/settings')}
+                                    className="bg-gray-400 text-white px-6 py-3 rounded-xl hover:bg-gray-500 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                                >
+                                    Back to Settings
+                                </button>
+                                <button
+                                    onClick={() => router.push('/meal-prep')}
+                                    className="bg-gray-400 text-white px-6 py-3 rounded-xl hover:bg-gray-500 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                                >
+                                    Prepare Your Meal
+                                </button>
+                            </div>
                         </div>
 
                         {/* Bottom decorative element */}

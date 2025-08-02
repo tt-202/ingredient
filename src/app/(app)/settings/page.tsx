@@ -87,16 +87,14 @@ export default function SettingsPage() {
                             </div>
                             <div className="flex items-center gap-3">
                                 {user && (
-                                    <span className="text-sm font-bold text-gray-700 bg-white/40 px-3 py-2 rounded-lg border border-white/60">
+                                    <button
+                                        onClick={handleLogout}
+                                        className="text-sm font-bold text-gray-700 bg-white/40 px-3 py-2 rounded-lg border border-white/60 hover:text-red-600 hover:underline transition-colors"
+                                        title="Click to log out"
+                                    >
                                         {user.email}
-                                    </span>
+                                    </button>
                                 )}
-                                <button
-                                    onClick={handleLogout}
-                                    className="text-sm text-gray-600 hover:text-gray-800 hover:underline transition-colors"
-                                >
-                                    Logout
-                                </button>
                             </div>
                         </div>
 

@@ -102,7 +102,7 @@ export default function ContactPage() {
                                         className="w-full h-full object-cover"
                                     />
                                 </div>
-                                
+
                             </div>
                             <div className="flex items-center gap-3">
                                 {user && (
@@ -213,7 +213,7 @@ export default function ContactPage() {
                         <div className="text-center mt-8">
                             <button
                                 onClick={() => router.push('/login')}
-                                className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-500 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium"
+                                className="bg-gray-400 text-white px-6 py-3 rounded-xl hover:bg-gray-500 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium"
                             >
                                 ← Back to Login
                             </button>

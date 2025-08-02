@@ -123,7 +123,7 @@ export default function ForgotPasswordPage() {
                         <button
                             type="submit"
                             disabled={status === 'loading'}
-                            className="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-4 px-6 rounded-xl font-medium hover:from-gray-700 hover:to-gray-800 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                            className="w-full bg-gray-400 text-white py-4 px-6 rounded-xl font-medium hover:bg-gray-500 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                         >
                             {status === 'loading' ? (
                                 <div className="flex items-center justify-center gap-2">

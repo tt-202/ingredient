@@ -18,18 +18,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <Link href="/" className="text-xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 bg-clip-text text-transparent">
                 Ingredient Imposter
               </Link>
-              <Link
-                href="/smart-swap"
-                className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                Smart Swap
-              </Link>
-              <Link
-                href="/settings"
-                className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                Settings
-              </Link>
               {!isPending && session?.user && (
                 <>
                   <Link
@@ -38,6 +26,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                   >
                     <Upload className="w-5 h-5" />
                     Upload
+                  </Link>
+                  <Link
+                    href="/meal-prep"
+                    className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+                  >
+                    Meal Prep
                   </Link>
                 </>
               )}
