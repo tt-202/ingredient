@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { MongoClient, Db } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import nodemailer from "nodemailer";
+import { getTrustedOrigins } from "@/lib/trusted-origins";
 
 // Async MongoDB connection helper with caching
 let cachedClient: MongoClient | null = null;
@@ -78,14 +79,7 @@ const sendEmail = async (options: {
 export const auth = (async () => {
   const { db } = await connectToDatabase(process.env.MONGODB_URI!);
 
-  const trustedOrigins = [
-    "http://localhost:3000",
-    "https://ingredient-tuyentrans-projects.vercel.app",
-    "https://ingredient.app",
-    "https://ingredientimposter.xyz",
-    process.env.NEXT_PUBLIC_APP_URL,
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
-  ].filter((origin): origin is string => typeof origin === 'string');
+  const trustedOrigins = getTrustedOrigins();
 
   return betterAuth({
     secret: process.env.BETTER_AUTH_SECRET || "your-secret-key-here",

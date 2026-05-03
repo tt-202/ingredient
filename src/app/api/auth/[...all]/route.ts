@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"; // auth is Promise<BetterAuthInstance>
 import { toNextJsHandler } from "better-auth/next-js";
+import { corsAllowOriginFromRequest } from "@/lib/trusted-origins";
 
 // Debug logging for environment variables
 console.log('DEBUG ENV', {
@@ -21,11 +22,9 @@ async function getHandler() {
     return handler;
 }
 
-async function addCorsHeaders(res: Response) {
+async function addCorsHeaders(res: Response, request: Request) {
     const newHeaders = new Headers(res.headers);
-    const origin = process.env.NODE_ENV === 'production'
-        ? (process.env.NEXT_PUBLIC_APP_URL || `https://${process.env.VERCEL_URL}`)
-        : "http://localhost:3000";
+    const origin = corsAllowOriginFromRequest(request);
 
     newHeaders.set("Access-Control-Allow-Origin", origin);
     newHeaders.set("Access-Control-Allow-Credentials", "true");
@@ -39,7 +38,7 @@ async function addCorsHeaders(res: Response) {
 export async function POST(req: Request) {
     const h = await getHandler();
     const res = await h.POST(req);
-    return addCorsHeaders(res);
+    return addCorsHeaders(res, req);
 }
 
 //export async function POST(req: Request) {
@@ -55,13 +54,11 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
     const h = await getHandler();
     const res = await h.GET(req);
-    return addCorsHeaders(res);
+    return addCorsHeaders(res, req);
 }
 
-export async function OPTIONS() {
-    const origin = process.env.NODE_ENV === 'production'
-        ? (process.env.NEXT_PUBLIC_APP_URL || `https://${process.env.VERCEL_URL}`)
-        : "http://localhost:3000";
+export async function OPTIONS(request: Request) {
+    const origin = corsAllowOriginFromRequest(request);
 
     return new Response(null, {
         status: 200,
