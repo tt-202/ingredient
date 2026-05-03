@@ -15,6 +15,19 @@ const ExclamationTriangleIcon = () => (
     <svg className="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.72-1.36 3.485 0l6.516 11.591c.75 1.334-.213 2.985-1.742 2.985H3.483c-1.53 0-2.492-1.651-1.742-2.985L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-2a1 1 0 01-1-1V9a1 1 0 112 0v2a1 1 0 01-1 1z" clipRule="evenodd" /></svg>
 );
 
+/** When `candidates[0].content.parts[0].text` is missing, explain using the API body (error, HTTP, finishReason). */
+function describeGeminiFailure(data: unknown, res: Response): string | null {
+    const d = data as {
+        error?: { message?: string };
+        candidates?: Array<{ finishReason?: string }>;
+    };
+    if (d?.error?.message) return d.error.message;
+    if (!res.ok) return `Gemini request failed (HTTP ${res.status}).`;
+    const finish = d?.candidates?.[0]?.finishReason;
+    if (finish && finish !== 'STOP') return `Gemini returned no text (finishReason: ${finish}).`;
+    return null;
+}
+
 function App() {
     const router = useRouter();
     const [ingredientInput, setIngredientInput] = useState('');
@@ -74,14 +87,14 @@ function App() {
         setResults({});
         setError(null);
 
-        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY?.trim();
         if (!apiKey) {
             setError('Google API key is missing.');
             setLoading(false);
             return;
         }
 
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${encodeURIComponent(apiKey)}`;
         const allResults: { [ingredient: string]: any[] } = {};
         const newHistoryEntries: any[] = [];
 
@@ -122,7 +135,8 @@ function App() {
 
                 if (!jsonString) {
                     console.warn('Empty response:', JSON.stringify(data, null, 2));
-                    throw new Error('Gemini response missing or empty.');
+                    const detail = describeGeminiFailure(data, res);
+                    throw new Error(detail || 'Gemini response missing or empty.');
                 }
 
                 let parsed;
@@ -299,13 +313,13 @@ function App() {
                                                             setError(null);
                                                             setHistoryResult(null);
                                                             // Perform a new search for this ingredient
-                                                            const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+                                                            const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY?.trim();
                                                             if (!apiKey) {
                                                                 setError('Google API key is missing.');
                                                                 setLoading(false);
                                                                 return;
                                                             }
-                                                            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                                                            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${encodeURIComponent(apiKey)}`;
                                                             const prompt = `For the ingredient '${entry.ingredient}', suggest 1–3 suitable substitutes. For each suggestion, return:\n- 'substitute'\n- 'score' (0–100 relevance)\n- 'reason'\n- 'cuisine_context' (optional)\n- 'allergen_info' (e.g. dairy, nuts)\n- 'historical_notes' (brief food history). Return the output as a JSON array.`;
                                                             const payload = {
                                                                 contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -337,7 +351,7 @@ function App() {
                                                                 const data = await res.json();
                                                                 const jsonString = data?.candidates?.[0]?.content?.parts?.[0]?.text;
                                                                 if (!jsonString) {
-                                                                    setError('No result found for this ingredient.');
+                                                                    setError(describeGeminiFailure(data, res) || 'No result found for this ingredient.');
                                                                     setLoading(false);
                                                                     return;
                                                                 }

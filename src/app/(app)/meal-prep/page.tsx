@@ -99,16 +99,15 @@ export default function MealPrepPage() {
         setError(null);
         setCookingSteps([]);
 
-        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY?.trim();
         if (!apiKey) {
             setError('Google API key is missing.');
             setLoading(false);
             return;
         }
 
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${encodeURIComponent(apiKey)}`;
 
-        // Create personalized prompt based on user settings
         let dietaryContext = '';
         if (userSettings) {
             if (userSettings.diet) {
