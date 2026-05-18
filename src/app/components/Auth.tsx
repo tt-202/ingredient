@@ -12,7 +12,9 @@ export default function Auth() {
     setError(null);
 
     try {
-      const callbackURL = process.env.NEXT_PUBLIC_BETTER_AUTH_URL ?? window.location.origin;
+      //const callbackURL = process.env.NEXT_PUBLIC_BETTER_AUTH_URL ?? window.location.origin;
+      const callbackURL = 'https://ingredient-tuyentrans-projects.vercel.app'
+      
       await authClient.signIn.social({
         provider: 'google',
         callbackURL: `${callbackURL}/`,

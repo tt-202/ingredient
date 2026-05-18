@@ -28,6 +28,47 @@ function describeGeminiFailure(data: unknown, res: Response): string | null {
     return null;
 }
 
+type SubstituteItem = {
+    substitute?: string;
+    score?: number;
+    reason?: string;
+    allergen_info?: string;
+    cuisine_context?: string;
+    historical_notes?: string;
+};
+
+/** Same scoring as the results list: highest score, with allergen penalty vs user allergies. */
+function scoreSubstitutes(
+    substitutes: SubstituteItem[],
+    allergyList: string[] = [],
+    includePreferenceNote = false
+) {
+    let bestIndex = -1;
+    let bestScore = -Infinity;
+    const scored = substitutes.map((sub, idx) => {
+        let score = sub.score ?? 0;
+        const explanation: string[] = [];
+        let hasAllergen = false;
+        if (
+            sub.allergen_info &&
+            allergyList.some((a) => sub.allergen_info!.toLowerCase().includes(a.toLowerCase()))
+        ) {
+            score -= 1000;
+            hasAllergen = true;
+            explanation.push('Contains an ingredient you are allergic to.');
+        }
+        if (includePreferenceNote) {
+            explanation.push('Compared to your preferences.');
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            bestIndex = idx;
+        }
+        return { ...sub, score, explanation, hasAllergen };
+    });
+    return { scored, bestIndex, best: bestIndex >= 0 ? scored[bestIndex] : undefined };
+}
+
 function App() {
     const router = useRouter();
     const [ingredientInput, setIngredientInput] = useState('');
@@ -149,9 +190,12 @@ function App() {
 
                 allResults[ingredient] = parsed;
 
-                // Save search history with best substitute and allergen info
-                const allergen = Array.isArray(parsed) && parsed[0]?.allergen_info ? parsed[0].allergen_info : undefined;
-                const bestSubstitute = Array.isArray(parsed) && parsed[0]?.substitute ? parsed[0].substitute : undefined;
+                const allergyList: string[] = userSettings?.allergies || [];
+                const { best } = Array.isArray(parsed)
+                    ? scoreSubstitutes(parsed, allergyList, Boolean(userSettings))
+                    : { best: undefined };
+                const bestSubstitute = best?.substitute;
+                const allergen = best?.allergen_info;
                 const now = new Date().toISOString();
 
                 // Get user allergies from localStorage
@@ -448,32 +492,12 @@ function App() {
                             {(Object.keys(results).length > 0 || historyResult) && (
                                 <div className="mt-8 space-y-6">
                                     {Object.entries(historyResult || results).map(([ingredient, substitutes]) => {
-                                        // Professional recommendation logic
-                                        let bestIndex = -1;
-                                        let bestScore = -Infinity;
                                         const allergyList: string[] = userSettings?.allergies || [];
-                                        // Scoring: penalize allergens, reward preference match
-                                        const scored = substitutes.map((sub, idx) => {
-                                            let score = sub.score || 0;
-                                            const explanation = [];
-                                            let hasAllergen = false;
-                                            if (sub.allergen_info && allergyList.some((a: string) => sub.allergen_info.toLowerCase().includes(a.toLowerCase()))) {
-                                                score -= 1000; // Big penalty for allergens
-                                                hasAllergen = true;
-                                                explanation.push('Contains an ingredient you are allergic to.');
-                                            }
-                                            // Preference matching (simple: higher is better, can be improved)
-                                            if (userSettings) {
-                                                // Example: if substitute.reason or other fields mention 'spicy', 'sweet', etc., compare to userSettings
-                                                // For demo, just add a generic message
-                                                explanation.push('Compared to your preferences.');
-                                            }
-                                            if (score > bestScore) {
-                                                bestScore = score;
-                                                bestIndex = idx;
-                                            }
-                                            return { ...sub, score, explanation, hasAllergen };
-                                        });
+                                        const { scored, bestIndex } = scoreSubstitutes(
+                                            substitutes,
+                                            allergyList,
+                                            Boolean(userSettings)
+                                        );
                                         return (
                                             <div key={ingredient} className="bg-white/40 backdrop-blur-sm rounded-xl border border-white/60 p-6">
                                                 <h3 className="text-xl font-bold text-gray-800 mb-4">Substitutes for {ingredient}</h3>
